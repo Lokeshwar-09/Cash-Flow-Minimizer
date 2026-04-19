@@ -1,14 +1,59 @@
-# Ignore virtual environment
+# -------------------------------
+# 🔹 Python Virtual Environments
+# -------------------------------
 venv/
+apk-venv/
+env/
+ENV/
+
+# -------------------------------
+# 🔹 Python Cache / Compiled Files
+# -------------------------------
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.pyc.*
+*.py,cover
 
-# Ignore IDE files
+# -------------------------------
+# 🔹 Distribution / Packaging
+# -------------------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# -------------------------------
+# 🔹 Logs & Temp Files
+# -------------------------------
+*.log
+*.tmp
+*.swp
+
+# -------------------------------
+# 🔹 Jupyter Notebook
+# -------------------------------
+.ipynb_checkpoints/
+
+# -------------------------------
+# 🔹 Environment Variables
+# -------------------------------
+.env
+
+# -------------------------------
+# 🔹 IDE / Editor Files
+# -------------------------------
 .vscode/
 .idea/
 
-# OS files
+# -------------------------------
+# 🔹 OS Files
+# -------------------------------
 .DS_Store
 Thumbs.db
+
+# -------------------------------
+# 🔹 Streamlit (optional cache)
+# -------------------------------
+.streamlit/secrets.toml
