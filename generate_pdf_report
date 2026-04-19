@@ -1,0 +1,126 @@
+def generate_pdf_report(members, expenses, transactions, greedy_result, flow_result, filename):
+
+    graph_file = "static/graphs/greedy.png"
+
+    pdf = FPDF()
+    pdf.add_page()
+
+    # TITLE
+    pdf.set_font("Arial","B",16)
+    pdf.cell(0,10,"Cash Flow Minimization Report",0,1,"C")
+
+    pdf.ln(5)
+
+    # GROUP MEMBERS
+    pdf.set_font("Arial","B",12)
+    pdf.cell(0,8,"Group Members",0,1)
+
+    pdf.set_font("Arial","B",11)
+    pdf.cell(90,8,"Name",1,0,"C")
+    pdf.cell(100,8,"Email ID",1,1,"C")
+
+    pdf.set_font("Arial","",11)
+
+    for name,email in members.items():
+        pdf.cell(90,8,name,1)
+        pdf.cell(100,8,email,1,1)
+
+    pdf.ln(5)
+
+    # SAVED EXPENSES
+    pdf.set_font("Arial","B",12)
+    pdf.cell(0,8,"Saved Expenses",0,1)
+
+    pdf.set_font("Arial","",11)
+
+    for e in expenses:
+
+        pdf.set_font("Arial","B",11)
+        pdf.cell(0,8,f"{e['place']} (Total: Rs.{e['total']:.2f})",0,1)
+
+        pdf.set_font("Arial","",11)
+        pdf.cell(0,8,f"Paid by: {e['payer']}",0,1)
+
+        for p in e["participants"]:
+            if p != e["payer"]:
+                pdf.cell(
+                    0,
+                    8,
+                    f"{p} owes {e['payer']} Rs.{e['per_person']:.2f}",
+                    0,
+                    1
+                )
+
+        pdf.ln(2)
+
+    pdf.ln(5)
+
+    # ORIGINAL TRANSACTIONS
+    pdf.set_font("Arial","B",12)
+    pdf.cell(0,8,"Original Transactions",0,1)
+
+    pdf.set_font("Arial","B",11)
+    pdf.cell(60,8,"Payer",1,0,"C")
+    pdf.cell(60,8,"Payee",1,0,"C")
+    pdf.cell(70,8,"Amount",1,1,"C")
+
+    pdf.set_font("Arial","",11)
+
+    for a,b,amt in transactions:
+        pdf.cell(60,8,a,1)
+        pdf.cell(60,8,b,1)
+        pdf.cell(70,8,f"Rs.{amt:.0f}",1,1,"R")
+
+    pdf.ln(5)
+
+    # GREEDY RESULT
+    pdf.set_font("Arial","B",12)
+    pdf.cell(0,8,"Greedy Algorithm Result",0,1)
+
+    pdf.set_font("Arial","",11)
+
+    for a,b,amt in greedy_result:
+        pdf.cell(0,8,f"{a} -> {b} : Rs.{amt:.2f}",0,1)
+
+    pdf.ln(5)
+
+    reduction = len(transactions) - len(greedy_result)
+    reduction_pct = (reduction / len(transactions) * 100) if transactions else 0
+
+    pdf.set_font("Arial","B",11)
+    pdf.cell(
+        0,
+        8,
+        f"Reduced to {len(greedy_result)} transactions ({reduction_pct:.1f}% savings)",
+        0,
+        1
+    )
+
+    pdf.ln(10)
+
+    # GREEDY GRAPH
+    if os.path.exists(graph_file):
+
+        if pdf.get_y() > 180:
+            pdf.add_page()
+
+        pdf.set_font("Arial","B",12)
+        pdf.cell(0,10,"Greedy Settlement Graph",0,1)
+
+        pdf.image(graph_file, x=25, w=160)
+
+    # FOOTER
+    pdf.set_y(-15)
+    pdf.set_font("Arial","I",10)
+    pdf.cell(
+        0,
+        10,
+        f"Generated on {datetime.now().strftime('%d %b %Y %H:%M')}",
+        0,
+        0,
+        "C"
+    )
+
+    pdf.output(filename)
+
+    return filename
